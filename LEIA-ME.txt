@@ -1,0 +1,21 @@
+FINANÇAS BRUNO - arquivos do site
+
+ESTRUTURA (mantenha as pastas assim):
+  index.html            -> página principal (estrutura do site)
+  css/style.css         -> todo o visual (cores, fontes, layout, bordas)
+  js/storage.js         -> salva os dados no navegador (localStorage)
+  js/tailwind-config.js -> cores e fonte usadas pelo Tailwind
+  js/app.js             -> toda a lógica: lançamentos, limite, gráficos, filtros
+
+COMO USAR
+  1) Para testar: abra o index.html no navegador (precisa de internet,
+     pois o Tailwind, o Chart.js e as fontes vêm de links externos).
+  2) Para colocar no ar: envie a pasta inteira para um serviço de hospedagem
+     estática (GitHub Pages, Netlify, Vercel, Cloudflare Pages).
+     Não precisa de servidor, PHP nem banco de dados.
+
+IMPORTANTE SOBRE OS DADOS
+  Os lançamentos e o limite ficam salvos no navegador de cada aparelho
+  (localStorage). Eles NÃO passam de um aparelho para outro e se apagam
+  se você limpar os dados do navegador. Para sincronizar entre aparelhos
+  seria preciso criar um banco de dados online (posso te ajudar com isso).

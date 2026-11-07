@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>FINANÇAS BRUNO 💖</title>
+    <!-- Tailwind CSS -->
+    <script src="js/storage.js"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <!-- Chart.js para Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="js/tailwind-config.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen flex flex-col antialiased pb-10 selection:bg-pink-300 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white/80 dark:bg-darkCard/80 backdrop-blur-md sticky top-0 z-50 border-b border-pink-100 dark:border-darkBorder">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            
+            <!-- Branding -->
+            <div class="flex items-center gap-3 animate-pop">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-babyPink-400 to-pink-300 flex items-center justify-center text-white text-xl shadow-md shadow-pink-200 dark:shadow-none animate-float">
+                    <i class="fa-solid fa-piggy-bank"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-pink-500 via-rose-400 to-pink-400 bg-clip-text text-transparent">
+                        FINANÇAS BRUNO
+                    </h1>
+                    <p class="text-xs text-gray-400 dark:text-gray-400 font-medium">Controle Didático & Inteligente</p>
+                </div>
+            </div>
+            
+            <!-- Controls (Theme Toggle + Tips) -->
+            <div class="flex items-center gap-3">
+                <!-- Theme Toggle Button -->
+                <button data-act="toggleTheme" id="themeBtn" aria-label="Alternar Tema" class="w-10 h-10 rounded-2xl bg-pink-50 dark:bg-gray-800 text-pink-500 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-gray-700 flex items-center justify-center transition-all shadow-sm active:scale-95">
+                    <i id="themeIcon" class="fa-solid fa-moon text-base"></i>
+                </button>
+
+                <!-- Quick Tip Trigger -->
+                <button data-act="toggleDidacticModal" class="flex items-center gap-2 bg-gradient-to-r from-pink-50 to-rose-50 dark:from-gray-800 dark:to-gray-800 hover:from-pink-100 hover:to-rose-100 dark:hover:bg-gray-700 text-pink-600 dark:text-pink-300 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm active:scale-95 border border-pink-100/50 dark:border-gray-700">
+                    <i class="fa-solid fa-wand-magic-sparkles text-pink-400 animate-pulse"></i>
+                    <span class="hidden sm:inline">Dica Rápida</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 flex-grow w-full space-y-6">
+
+        <!-- Dashboard premium -->
+        <section id="dash" class="pk-grid">
+            <div class="pk-card"><div class="pk-lab"><i class="fa-solid fa-circle-arrow-up pk-pos"></i> Entradas do mês</div><div class="pk-val pk-pos" id="kEnt">R$ 0,00</div></div>
+            <div class="pk-card"><div class="pk-lab"><i class="fa-solid fa-circle-arrow-down pk-neg"></i> Despesas do mês</div><div class="pk-val pk-neg" id="kDes">R$ 0,00</div></div>
+            <div class="pk-card"><div class="pk-lab"><i class="fa-solid fa-piggy-bank" style="color:var(--pk)"></i> Economia mensal</div><div class="pk-val" id="kEco">R$ 0,00</div></div>
+            <div class="pk-card"><div class="pk-lab"><i class="fa-solid fa-chart-pie" style="color:var(--pk)"></i> Gastos / renda</div><div class="pk-val" id="kPct">0%</div><div class="pk-bar"><i id="kBar"></i></div></div>
+        </section>
+
+        <!-- Transaction Forms and List Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Add Transaction Form -->
+            <div class="bg-white dark:bg-darkCard p-6 rounded-3xl card-shadow border border-pink-50 dark:border-darkBorder lg:col-span-1 h-fit hover-lift animate-slide-up" style="animation-delay: 0.3s;">
+                <div class="flex items-center gap-2.5 mb-6">
+                    <div class="w-9 h-9 rounded-xl bg-pink-100 dark:bg-pink-950/60 text-pink-500 dark:text-pink-300 flex items-center justify-center text-sm font-bold shadow-inner">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-800 dark:text-white text-base">Nova Transação</h3>
+                </div>
+
+                <div id="transactionForm" class="space-y-4">
+                    <!-- Type Selector (Radio Buttons styled) -->
+                    <div class="grid grid-cols-2 gap-2 p-1.5 bg-pink-50/60 dark:bg-gray-800/60 rounded-2xl border border-pink-100 dark:border-gray-700">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="type" value="income" class="peer hidden" checked>
+                            <div class="py-2.5 text-center rounded-xl text-xs font-bold text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-darkCard peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 peer-checked:shadow-sm transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-circle-arrow-up"></i> Entrada
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="type" value="expense" class="peer hidden">
+                            <div class="py-2.5 text-center rounded-xl text-xs font-bold text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-darkCard peer-checked:text-rose-500 dark:peer-checked:text-rose-400 peer-checked:shadow-sm transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-circle-arrow-down"></i> Saída
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Descrição</label>
+                        <input type="text" id="desc" required placeholder="Ex: Salário, Gasolina..." class="w-full px-4 py-3 text-sm rounded-2xl border border-pink-100 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-300 dark:focus:ring-pink-500 bg-pink-50/20 dark:bg-gray-800/40 text-gray-700 dark:text-white transition-all">
+                    </div>
+
+                    <!-- Amount & Date -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Valor (R$)</label>
+                            <input type="text" inputmode="decimal" autocomplete="off" id="amount" placeholder="0,00" class="w-full px-4 py-3 text-sm rounded-2xl border border-pink-100 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-300 dark:focus:ring-pink-500 bg-pink-50/20 dark:bg-gray-800/40 text-gray-700 dark:text-white transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Data</label>
+                            <input type="date" id="date" required class="w-full px-4 py-3 text-sm rounded-2xl border border-pink-100 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-300 dark:focus:ring-pink-500 bg-pink-50/20 dark:bg-gray-800/40 text-gray-700 dark:text-white transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Category -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Categoria</label>
+                        <select id="category" required class="w-full px-4 py-3 text-sm rounded-2xl border border-pink-100 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-300 dark:focus:ring-pink-500 bg-pink-50/20 dark:bg-gray-800/40 text-gray-700 dark:text-white transition-all">
+                            <!-- Dynamic Categories -->
+                        </select>
+                    </div>
+
+                    <button type="button" id="btnAdd" class="w-full py-3.5 bg-gradient-to-r from-babyPink-300 via-pink-400 to-rose-400 hover:from-pink-400 hover:to-pink-500 text-white font-extrabold rounded-2xl shadow-md shadow-pink-200 dark:shadow-none transition-all flex items-center justify-center gap-2 text-sm mt-2 active:scale-95">
+                        <i class="fa-solid fa-check"></i> Adicionar Registro
+                    </button>
+                </div>
+            </div>
+
+            <!-- Coluna direita: limite (porquinho) em cima do histórico -->
+            <div class="lg:col-span-2 space-y-6 min-w-0">
+        <!-- Limite de Gastos com Porquinho -->
+        <section id="limitSection" class="bg-white dark:bg-darkCard p-6 rounded-3xl card-shadow border border-pink-50 dark:border-darkBorder animate-pop">
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+                <!-- Porquinho animado -->
+                <div id="pigBox" class="pig-ok flex-shrink-0 w-40 sm:w-44 select-none">
+                    <svg viewBox="0 0 200 170" class="w-full h-auto" role="img" aria-label="Porquinho do limite de gastos">
+                        <ellipse cx="100" cy="158" rx="62" ry="7" fill="rgba(244,114,182,.25)"/>
+                        <g class="pig-wrap">
+                            <g class="pig-part pig-tail"><path d="M32 92 C14 84 14 62 30 64 C42 66 36 78 24 74" fill="none" stroke="#f472b6" stroke-width="5" stroke-linecap="round"/></g>
+                            <rect class="pig-part" x="64" y="132" width="16" height="22" rx="7" fill="#f472b6"/>
+                            <rect class="pig-part" x="116" y="132" width="16" height="22" rx="7" fill="#f472b6"/>
+                            <ellipse class="pig-body" cx="98" cy="98" rx="66" ry="46" fill="#f9a8d4"/>
+                            <ellipse cx="86" cy="80" rx="30" ry="14" fill="#fff" opacity=".22"/>
+                            <rect x="82" y="55" width="34" height="7" rx="3.5" fill="#be185d"/>
+                            <g class="pig-part pig-ear"><path d="M128 62 L142 32 L158 66 Z" fill="#f472b6"/><path d="M135 58 L142 42 L150 60 Z" fill="#fbcfe8"/></g>
+                            <ellipse cx="154" cy="102" rx="22" ry="17" fill="#f472b6"/>
+                            <ellipse cx="148" cy="102" rx="3.5" ry="5.5" fill="#9d174d"/>
+                            <ellipse cx="161" cy="102" rx="3.5" ry="5.5" fill="#9d174d"/>
+                            <g class="pig-eye"><circle cx="132" cy="84" r="5.5" fill="#1f2937"/><circle cx="134" cy="82" r="1.8" fill="#fff"/></g>
+                            <g class="pig-eye-over" stroke="#1f2937" stroke-width="3" stroke-linecap="round"><path d="M127 79 L137 89"/><path d="M137 79 L127 89"/></g>
+                            <circle cx="122" cy="98" r="7" fill="#fb7185" opacity=".45"/>
+                            <path class="pig-mouth-ok" d="M138 118 Q150 126 162 118" fill="none" stroke="#9d174d" stroke-width="3" stroke-linecap="round"/>
+                            <path class="pig-mouth-warn" d="M140 122 Q150 116 160 122" fill="none" stroke="#9d174d" stroke-width="3" stroke-linecap="round"/>
+                            <ellipse class="pig-mouth-over" cx="150" cy="121" rx="7" ry="5" fill="#9d174d"/>
+                            <path class="pig-sweat" d="M118 64 Q122 72 118 76 Q114 72 118 64Z" fill="#7dd3fc"/>
+                            <g class="pig-over-x" font-size="18" font-weight="800" fill="#be185d"><text x="40" y="40">!</text><text x="168" y="34">!</text></g>
+                            <g class="pig-coin"><circle cx="99" cy="38" r="12" fill="#fbbf24" stroke="#d97706" stroke-width="2.5"/><text x="99" y="43" text-anchor="middle" font-size="14" font-weight="800" fill="#b45309">$</text></g>
+                            <text class="pig-heart" x="104" y="40" font-size="18" fill="#ec4899">&#10084;</text>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Barra e controles -->
+                <div class="flex-grow w-full">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                        <h3 class="text-base sm:text-lg font-extrabold text-gray-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-piggy-bank text-pink-500"></i> Limite de Gastos do Mês</h3>
+                        <span id="limitMonth" class="text-xs font-bold text-pink-600 dark:text-pink-300 bg-pink-50 dark:bg-gray-800 px-3 py-1 rounded-full"></span>
+                    </div>
+                    <p id="pigMsg" class="text-sm text-gray-500 dark:text-gray-400 mb-4 min-h-[20px]"></p>
+
+                    <div id="limitBarWrap" class="relative h-7 rounded-full bg-pink-100/70 dark:bg-gray-800 overflow-hidden border border-pink-100 dark:border-gray-700">
+                        <div id="limitFill" class="limit-fill h-full rounded-full bg-emerald-400" style="width:0%"></div>
+                        <div id="limitPct" class="absolute inset-0 flex items-center justify-center text-xs font-black text-gray-800 dark:text-white mix-blend-normal">0%</div>
+                    </div>
+                    <div class="flex flex-wrap justify-between gap-2 mt-2 text-xs font-bold">
+                        <span class="text-rose-500 dark:text-rose-400">Gasto: <span id="limitSpent">R$ 0,00</span></span>
+                        <span id="limitLeft" class="text-emerald-600 dark:text-emerald-400">Restam: R$ 0,00</span>
+                        <span class="text-gray-400">Limite: <span id="limitValue">R$ 0,00</span></span>
+                    </div>
+
+                    <div class="flex gap-2 mt-4">
+                        <div class="relative flex-grow">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-pink-400">R$</span>
+                            <input id="limitInput" type="text" inputmode="decimal" autocomplete="off" placeholder="Defina seu limite do mês" class="w-full pl-10 pr-3 py-2.5 text-sm font-semibold rounded-xl border border-pink-100 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-300 dark:focus:ring-pink-500 bg-pink-50/40 dark:bg-gray-800/40 text-gray-700 dark:text-white">
+                        </div>
+                        <button data-act="saveLimit" class="px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 shadow-md transition-all active:scale-95"><i class="fa-solid fa-check mr-1"></i> Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+            <!-- Transactions List -->
+            <div class="bg-white dark:bg-darkCard p-6 rounded-3xl card-shadow border border-pink-50 dark:border-darkBorder lg:col-span-2 flex flex-col h-[680px] hover-lift animate-slide-up" style="animation-delay: 0.35s;">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                    <div>
+                        <h3 class="font-bold text-gray-800 dark:text-white text-base">Histórico de Transações</h3>
+                        <p class="text-xs text-gray-400">Acompanhe todos os seus registros financeiros.</p>
+                    </div>
+                    
+                    <!-- Filters -->
+                    <div class="flex items-center gap-1 bg-pink-50/60 dark:bg-gray-800/60 p-1 rounded-2xl border border-pink-100 dark:border-gray-700 text-xs">
+                        <button data-act="setFilter" data-arg="all" id="filter-all" class="px-3 py-1.5 rounded-xl font-bold bg-white dark:bg-darkCard text-pink-600 dark:text-pink-300 shadow-sm transition-all">Todos</button>
+                        <button data-act="setFilter" data-arg="income" id="filter-income" class="px-3 py-1.5 rounded-xl font-medium text-gray-500 dark:text-gray-400 hover:text-pink-600 transition-all">Entradas</button>
+                        <button data-act="setFilter" data-arg="expense" id="filter-expense" class="px-3 py-1.5 rounded-xl font-medium text-gray-500 dark:text-gray-400 hover:text-pink-600 transition-all">Saídas</button>
+                    </div>
+                </div>
+
+                                <!-- Seletor de mês e resumo -->
+                <div class="mb-4 space-y-3">
+                    <div class="flex items-center gap-2">
+                        <button data-act="shiftMonth" data-arg="-1" aria-label="Mês anterior" class="w-9 h-9 rounded-xl bg-pink-50/60 dark:bg-gray-800/60 border border-pink-100 dark:border-gray-700 text-pink-500 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-gray-700 transition-all active:scale-95 text-xs">&#10094;</button>
+                        <select id="monthSelect" class="flex-grow px-3 py-2 text-sm font-semibold rounded-xl border border-pink-100 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-300 dark:focus:ring-pink-500 bg-pink-50/40 dark:bg-gray-800/40 text-gray-700 dark:text-white"></select>
+                        <button data-act="shiftMonth" data-arg="1" aria-label="Próximo mês" class="w-9 h-9 rounded-xl bg-pink-50/60 dark:bg-gray-800/60 border border-pink-100 dark:border-gray-700 text-pink-500 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-gray-700 transition-all active:scale-95 text-xs">&#10095;</button>
+                    </div>
+                    <div id="monthSummary" class="grid grid-cols-3 gap-2 text-center"></div>
+                </div>
+
+                <!-- Scrollable List -->
+                <div id="transactionsList" class="flex-grow overflow-y-auto custom-scrollbar pr-2 space-y-3">
+                    <!-- Dynamic Items -->
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <!-- Banner Didático e de Saúde Financeira -->
+        <section class="bg-gradient-to-r from-pink-100 via-rose-50 to-pink-100 dark:from-darkCard dark:via-gray-900 dark:to-darkCard rounded-3xl p-6 card-shadow border border-white dark:border-darkBorder flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden animate-slide-up">
+            <div class="space-y-2 z-10">
+                <span class="bg-white/80 dark:bg-gray-800/90 text-pink-600 dark:text-pink-300 text-xs font-bold px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-sm border border-pink-100 dark:border-gray-700 inline-block animate-pulse-glow">
+                    Status Atual
+                </span>
+                <h2 id="healthTitle" class="text-xl sm:text-2xl font-extrabold text-gray-800 dark:text-white">Analisando suas finanças...</h2>
+                <p id="healthDesc" class="text-sm text-gray-600 dark:text-gray-300 max-w-xl leading-relaxed">Adicione suas entradas e saídas para ver sugestões personalizadas sobre seu orçamento.</p>
+            </div>
+            
+            <div class="flex items-center gap-4 z-10 w-full md:w-auto justify-end">
+                <div id="healthBadge" class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md px-5 py-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm border border-pink-100 dark:border-gray-700 w-full md:w-auto justify-center hover-lift">
+                    <div id="healthIcon" class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-500 flex items-center justify-center text-xl shadow-inner">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-400 dark:text-gray-400 font-semibold">Saúde Financeira</div>
+                        <div id="healthStatus" class="font-extrabold text-emerald-600 dark:text-emerald-400 text-base">Ótima</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KPI Cards Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Entradas Card -->
+            <div class="bg-white dark:bg-darkCard p-6 rounded-3xl card-shadow border border-pink-50 dark:border-darkBorder hover-lift animate-slide-up" style="animation-delay: 0.05s;">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-400">Total Entradas</span>
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500 flex items-center justify-center">
+                        <i class="fa-solid fa-arrow-up text-sm"></i>
+                    </div>
+                </div>
+                <div id="totalIncomes" class="text-2xl sm:text-3xl font-black text-gray-800 dark:text-white">R$ 0,00</div>
+                <div class="text-xs text-emerald-500 font-semibold mt-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-check"></i> Receitas registradas
+                </div>
+            </div>
+
+            <!-- Saídas Card -->
+            <div class="bg-white dark:bg-darkCard p-6 rounded-3xl card-shadow border border-pink-50 dark:border-darkBorder hover-lift animate-slide-up" style="animation-delay: 0.1s;">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-400">Total Saídas</span>
+                    <div class="w-10 h-10 rounded-2xl bg-rose-50 dark:bg-rose-950/40 text-rose-500 flex items-center justify-center">
+                        <i class="fa-solid fa-arrow-down text-sm"></i>
+                    </div>
+                </div>
+                <div id="totalExpenses" class="text-2xl sm:text-3xl font-black text-gray-800 dark:text-white">R$ 0,00</div>
+                <div class="text-xs text-rose-400 font-semibold mt-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-basket-shopping"></i> Gastos acumulados
+                </div>
+            </div>
+        </section>
+
+        <!-- Análise financeira -->
+        <section id="chartsP" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-white dark:bg-darkCard p-6 rounded-3xl card-shadow border border-pink-50 dark:border-darkBorder"><h3 class="text-sm font-extrabold mb-3 text-gray-800 dark:text-white">Entradas x Saídas (mês)</h3><div class="h-60"><canvas id="pcDonut"></canvas></div></div>
+            <div class="bg-white dark:bg-darkCard p-6 rounded-3xl card-shadow border border-pink-50 dark:border-darkBorder"><h3 class="text-sm font-extrabold mb-3 text-gray-800 dark:text-white">Evolução do saldo</h3><div class="h-60"><canvas id="pcLine"></canvas></div></div>
+            <div class="bg-white dark:bg-darkCard p-6 rounded-3xl card-shadow border border-pink-50 dark:border-darkBorder"><h3 class="text-sm font-extrabold mb-3 text-gray-800 dark:text-white">Gastos dos últimos meses</h3><div class="h-60"><canvas id="pcBars"></canvas></div></div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Expense Categories Chart -->
+            <div class="bg-white dark:bg-darkCard p-6 rounded-3xl card-shadow border border-pink-50 dark:border-darkBorder lg:col-span-1 flex flex-col justify-between hover-lift animate-slide-up" style="animation-delay: 0.2s;">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="font-bold text-gray-800 dark:text-white text-base">Gastos por Categoria</h3>
+                        <i class="fa-solid fa-chart-pie text-pink-400"></i>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-4">Veja com o que você mais gasta.</p>
+                </div>
+                <div class="relative w-full h-64 flex items-center justify-center">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Income vs Expenses Bar Chart -->
+            <div class="bg-white dark:bg-darkCard p-6 rounded-3xl card-shadow border border-pink-50 dark:border-darkBorder lg:col-span-2 flex flex-col justify-between hover-lift animate-slide-up" style="animation-delay: 0.25s;">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="font-bold text-gray-800 dark:text-white text-base">Comparativo de Transações</h3>
+                        <i class="fa-solid fa-chart-column text-pink-400"></i>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-4">Visão clara da proporção entre Entradas e Saídas.</p>
+                </div>
+                <div class="relative w-full h-64">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+
+    <!-- Didactic Tips Modal -->
+    <div id="didacticModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkCard rounded-3xl max-w-md w-full p-6 card-shadow border border-pink-100 dark:border-darkBorder relative animate-pop">
+            <button data-act="toggleDidacticModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 w-8 h-8 rounded-full bg-pink-50 dark:bg-gray-800 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="w-12 h-12 rounded-2xl bg-pink-100 dark:bg-pink-950/70 text-pink-500 dark:text-pink-300 flex items-center justify-center text-xl font-bold mb-4 shadow-inner">
+                <i class="fa-solid fa-lightbulb"></i>
+            </div>
+
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-2">Dica Financeira Didática ✨</h3>
+            <p id="modalTipText" class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                <!-- Tip text dynamic -->
+            </p>
+
+            <div class="bg-pink-50 dark:bg-gray-800/80 rounded-2xl p-4 border border-pink-100 dark:border-gray-700 mb-6 text-xs text-pink-700 dark:text-pink-300 leading-relaxed">
+                <strong>Regra dos 50/30/20:</strong> Tente guardar 50% para necessidades básicas, 30% para desejos pessoais e 20% para a sua reserva do futuro ou abatimento de dívidas!
+            </div>
+
+            <button data-act="nextTip" class="w-full py-3 bg-gradient-to-r from-babyPink-300 to-pink-400 text-white font-bold rounded-2xl hover:from-pink-400 hover:to-pink-500 transition-all text-sm active:scale-95 shadow-md shadow-pink-200 dark:shadow-none">
+                Ver Outra Dica
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-900 text-white px-4 py-3 rounded-2xl shadow-xl text-sm flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50 border border-gray-800">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastMsg">Mensagem</span>
+    </div>
+
+    <script src="js/app.js"></script>
+
+    
+
+    
+
+    
+</body>
+</html>
